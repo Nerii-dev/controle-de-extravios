@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Controle de Extravios</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css">
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div id="app-container" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="bg-white shadow-md rounded-lg p-6 mb-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Controle de Extravios</h1>
+                    <p class="text-gray-600 mt-1">Gestão de produtos extraviados do Mercado Livre</p>
+                </div>
+                <div class="flex items-center mt-4 sm:mt-0">
+                    <nav>
+                        <a href="dashboard.html" class="bg-blue-600 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-700 transition-colors">Dashboard</a>
+                        <a href="controle_extravios.html" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg shadow hover:bg-gray-300 transition-colors ml-2">Lançar/Consultar</a>
+                    </nav>
+                    <a href="index.html" class="ml-4 bg-gray-500 text-white py-2 px-4 rounded-lg shadow hover:bg-gray-600 transition-colors">Voltar</a>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div id="dashboard-view">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-gray-500 font-medium">Total Extraviado (R$)</h3>
+                        <p id="total-value" class="text-3xl font-bold mt-2">R$ 0,00</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-gray-500 font-medium">Pedidos em Análise</h3>
+                        <p id="status-analysis" class="text-3xl font-bold mt-2">0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-gray-500 font-medium">Pedidos Resolvidos</h3>
+                        <p id="status-resolved" class="text-3xl font-bold mt-2">0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-gray-500 font-medium">Pedidos Contestados</h3>
+                        <p id="status-contested" class="text-3xl font-bold mt-2">0</p>
+                    </div>
+                </div>
+                <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow lg:col-span-1">
+                        <h3 class="text-xl font-bold mb-4">Extravios por Loja (Pedidos)</h3>
+                        <div id="store-summary" class="grid grid-cols-2 sm:grid-cols-3 gap-4"></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow lg:col-span-1">
+                        <h3 class="text-xl font-bold mb-4">Prazos a Vencer para Reclamação</h3>
+                        <div id="upcoming-deadlines-list" class="space-y-1"></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow lg:col-span-1">
+                        <h3 class="text-xl font-bold mb-4">Reembolsos Solicitados/Finalizados</h3>
+                        <div id="reimbursements-requested-list" class="space-y-1"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="text-center text-gray-500 mt-8">
+            <p>User ID: <span id="user-id-display" class="font-mono">Carregando...</span></p>
+        </footer>
+    </div>
+    
+    <div id="toast-container" class="toast-container"></div>
+    
+    <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

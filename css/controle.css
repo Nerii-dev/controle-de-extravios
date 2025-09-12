@@ -1,0 +1,9 @@
+.details-row.hidden {
+    display: none;
+}
+.order-row svg {
+    transition: transform 0.2s ease-in-out;
+}
+.order-row svg.rotate-90 {
+    transform: rotate(90deg);
+}

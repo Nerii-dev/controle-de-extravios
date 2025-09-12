@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle - Controle de Extravios</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/controle.css">
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div id="app-container" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="bg-white shadow-md rounded-lg p-6 mb-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Controle de Extravios</h1>
+                    <p class="text-gray-600 mt-1">Gestão de produtos extraviados do Mercado Livre</p>
+                </div>
+                <div class="flex items-center mt-4 sm:mt-0">
+                    <nav>
+                        <a href="dashboard.html" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg shadow hover:bg-gray-300 transition-colors">Dashboard</a>
+                        <a href="controle_extravios.html" class="bg-blue-600 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-700 transition-colors ml-2">Lançar/Consultar</a>
+                    </nav>
+                    <a href="index.html" class="ml-4 bg-gray-500 text-white py-2 px-4 rounded-lg shadow hover:bg-gray-600 transition-colors">Voltar</a>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div id="control-view">
+                <div class="bg-white p-6 rounded-lg shadow mb-8">
+                    <h2 class="text-2xl font-bold mb-4">Lançar Novo Pedido Extraviado</h2>
+                    <form id="add-item-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div>
+                            <label for="store-select" class="block text-sm font-medium text-gray-700">Loja</label>
+                            <select id="store-select" name="store" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></select>
+                        </div>
+                        <div>
+                            <label for="order-id" class="block text-sm font-medium text-gray-700">ID do Pedido</label>
+                            <input type="text" id="order-id" name="orderId" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="loss-date" class="block text-sm font-medium text-gray-700">Data para Abrir Reclamação</label>
+                            <input type="date" id="loss-date" name="date" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="request-date" class="block text-sm font-medium text-gray-700">Data da Verificação</label>
+                            <input type="date" id="request-date" name="requestDate" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="status-select" class="block text-sm font-medium text-gray-700">Status</label>
+                            <select id="status-select" name="status" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                <option value="Em Análise">Em Análise</option>
+                                <option value="Resolvido">Resolvido</option>
+                                <option value="Contestado">Contestado</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2 lg:col-span-4 bg-gray-50 p-4 rounded-md border">
+                            <h3 class="text-lg font-medium text-gray-800 mb-2">Itens do Pedido</h3>
+                            <div id="items-container" class="space-y-3"></div>
+                            <button type="button" id="add-item-btn" class="mt-3 text-sm font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                                Adicionar Item
+                            </button>
+                        </div>
+                        <div class="lg:col-span-4 flex items-end">
+                            <button type="submit" class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg shadow hover:bg-blue-700 transition-colors font-semibold">Salvar Pedido</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4">Consultar Extravios</h2>
+                    <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                        <div class="flex-grow">
+                            <label for="filter-store" class="block text-sm font-medium text-gray-700">Filtrar por Loja</label>
+                            <select id="filter-store" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></select>
+                        </div>
+                        <div class="flex-grow">
+                             <label for="filter-order" class="block text-sm font-medium text-gray-700">Filtrar por ID do Pedido</label>
+                            <input type="text" id="filter-order" placeholder="Digite o ID do pedido..." class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                    <div id="loader-container" class="flex justify-center items-center py-8"><div class="loader"></div></div>
+                    <div class="overflow-x-auto" id="table-container" style="display: none;">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="pl-4 pr-2 py-3 w-12"></th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loja</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Pedido</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Total</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data Reclamação</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="items-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                            <tfoot id="items-table-footer" class="bg-gray-50 font-bold"></tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="order-details-view" style="display: none;">
+                 <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                           <h2 class="text-2xl font-bold mb-1">Detalhes do Pedido</h2>
+                           <p id="details-order-id" class="text-lg text-gray-600 font-mono"></p>
+                        </div>
+                        <button id="back-to-list-btn" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg shadow hover:bg-gray-300 transition-colors">Voltar para a Lista</button>
+                    </div>
+                    <div id="details-order-info" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6 border-t border-b py-4"></div>
+                    <h3 class="text-xl font-bold mb-4">Itens do Pedido</h3>
+                    <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                         <div class="flex-grow">
+                            <label for="filter-item-sku" class="block text-sm font-medium text-gray-700">Filtrar por SKU</label>
+                            <input type="text" id="filter-item-sku" placeholder="Digite o SKU..." class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div class="flex-grow">
+                             <label for="filter-item-name" class="block text-sm font-medium text-gray-700">Filtrar por Nome</label>
+                            <input type="text" id="filter-item-name" placeholder="Digite o nome do item..." class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome do Item</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody id="order-details-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="text-center text-gray-500 mt-8">
+            <p>User ID: <span id="user-id-display" class="font-mono">Carregando...</span></p>
+        </footer>
+    </div>
+    
+    <div id="edit-modal" class="modal-overlay">
+        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-4xl">
+            <h2 class="text-2xl font-bold mb-6">Editar Pedido Extraviado</h2>
+            <form id="edit-item-form">
+                <input type="hidden" id="edit-item-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div>
+                        <label for="edit-store-select" class="block text-sm font-medium text-gray-700">Loja</label>
+                        <select id="edit-store-select" name="store" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"></select>
+                    </div>
+                    <div>
+                        <label for="edit-order-id" class="block text-sm font-medium text-gray-700">ID do Pedido</label>
+                        <input type="text" id="edit-order-id" name="orderId" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div>
+                        <label for="edit-loss-date" class="block text-sm font-medium text-gray-700">Data para Abrir Reclamação</label>
+                        <input type="date" id="edit-loss-date" name="date" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div>
+                        <label for="edit-request-date" class="block text-sm font-medium text-gray-700">Data da Verificação</label>
+                        <input type="date" id="edit-request-date" name="requestDate" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                    </div>
+                </div>
+                <div class="mt-4 bg-gray-50 p-4 rounded-md border">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">Itens do Pedido</h3>
+                    <div id="edit-items-container" class="space-y-3"></div>
+                    <button type="button" id="edit-add-item-btn" class="mt-3 text-sm font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                        Adicionar Item
+                    </button>
+                </div>
+                <div class="mt-8 flex justify-end gap-4">
+                    <button type="button" id="cancel-edit-btn" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300">Cancelar</button>
+                    <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-sm text-center">
+            <h2 id="confirm-modal-title" class="text-xl font-bold mb-4">Confirmar Ação</h2>
+            <p id="confirm-modal-text" class="text-gray-600 mb-6">Você tem certeza?</p>
+            <div class="flex justify-center gap-4">
+                <button id="cancel-confirm-btn" class="bg-gray-200 text-gray-800 py-2 px-6 rounded-lg hover:bg-gray-300">Cancelar</button>
+                <button id="confirm-action-btn" class="bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700">Confirmar</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toast-container" class="toast-container"></div>
+
+    <script type="module" src="js/controle.js"></script>
+</body>
+</html>
