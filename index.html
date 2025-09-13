@@ -28,4 +28,29 @@
     </div>
 
 </body>
+
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBPy9J2RJ4kNslWT7SwCQEFua-NZrbHDzk",
+    authDomain: "extravio-84679.firebaseapp.com",
+    projectId: "extravio-84679",
+    storageBucket: "extravio-84679.firebasestorage.app",
+    messagingSenderId: "541000898123",
+    appId: "1:541000898123:web:973c1a656f6d2245201fce",
+    measurementId: "G-83X73YY3KC"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+
 </html>
