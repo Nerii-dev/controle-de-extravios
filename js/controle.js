@@ -1,4 +1,5 @@
-import { db, ensureAuth, showToast, formatCurrency, parseCurrency, STORES, appId } from './firebase-init.js';
+// js/controle.js
+import { db, ensureAuth, logoutUser, showToast, formatCurrency, parseCurrency, STORES, appId } from './firebase-init.js';
 import { collection, addDoc, onSnapshot, query, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 // --- ELEMENTOS DO DOM ---
@@ -10,7 +11,6 @@ const itemsTableFooter = document.getElementById('items-table-footer');
 const filterStore = document.getElementById('filter-store');
 const filterOrder = document.getElementById('filter-order');
 const storeSelect = document.getElementById('store-select');
-const userIdDisplay = document.getElementById('user-id-display');
 const loader = document.getElementById('loader-container');
 const tableContainer = document.getElementById('table-container');
 
@@ -37,20 +37,15 @@ let userId;
 // --- INICIALIZAÇÃO ---
 ensureAuth(user => {
     userId = user.uid;
-    userIdDisplay.textContent = userId;
+    document.getElementById('user-email-display').textContent = user.email;
+    document.getElementById('logout-btn').addEventListener('click', logoutUser);
+
     itemsCollection = collection(db, `artifacts/${appId}/users/${userId}/lost_products`);
     
     populateStoreSelects();
     setupEventListeners();
     createItemInputRow(document.getElementById('items-container')); 
     setupRealtimeListener();
-
-    // Verifica se há um orderId na URL para exibir detalhes
-    const urlParams = new URLSearchParams(window.location.search);
-    const orderIdFromUrl = urlParams.get('orderId');
-    if (orderIdFromUrl) {
-        filterOrder.value = orderIdFromUrl;
-    }
 });
 
 function populateStoreSelects() {
@@ -83,7 +78,6 @@ function navigateTo(viewName) {
     if (viewName === 'control') {
         orderDetailsView.style.display = 'none';
         controlView.style.display = 'block';
-        // Limpa o parâmetro da URL
         window.history.pushState({}, document.title, window.location.pathname);
     } else if (viewName === 'order-details') {
         controlView.style.display = 'none';
@@ -182,7 +176,6 @@ function setupRealtimeListener() {
         tableContainer.style.display = 'block';
         renderFilteredItems();
 
-        // Se um ID de pedido veio da URL, tenta mostrá-lo
         const urlParams = new URLSearchParams(window.location.search);
         const orderIdFromUrl = urlParams.get('orderId');
         if (orderIdFromUrl) {

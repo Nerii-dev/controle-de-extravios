@@ -2,7 +2,6 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Controle de Extravios</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,15 +13,16 @@
         <header class="bg-white shadow-md rounded-lg p-6 mb-8">
             <div class="flex flex-col sm:flex-row justify-between items-center">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Controle de Extravios</h1>
-                    <p class="text-gray-600 mt-1">Gestão de produtos extraviados do Mercado Livre</p>
+                    <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+                    <p class="text-gray-600 mt-1">Visão geral dos produtos extraviados</p>
                 </div>
                 <div class="flex items-center mt-4 sm:mt-0">
                     <nav>
-                        <a href="dashboard.html" class="bg-blue-600 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-700 transition-colors">Dashboard</a>
-                        <a href="controle_extravios.html" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg shadow hover:bg-gray-300 transition-colors ml-2">Lançar/Consultar</a>
+                        <a href="index.html" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg shadow hover:bg-gray-300">Voltar ao Menu</a>
+                        <a href="dashboard.html" class="bg-blue-600 text-white py-2 px-4 rounded-lg shadow ml-2">Dashboard</a>
+                        <a href="controle_extravios.html" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg shadow hover:bg-gray-300 ml-2">Lançar/Consultar</a>
                     </nav>
-                    <a href="index.html" class="ml-4 bg-gray-500 text-white py-2 px-4 rounded-lg shadow hover:bg-gray-600 transition-colors">Voltar</a>
+                    <button id="logout-btn" class="ml-4 bg-red-500 text-white py-2 px-4 rounded-lg shadow hover:bg-red-600">Sair</button>
                 </div>
             </div>
         </header>
@@ -65,7 +65,7 @@
         </main>
         
         <footer class="text-center text-gray-500 mt-8">
-            <p>User ID: <span id="user-id-display" class="font-mono">Carregando...</span></p>
+            <p>Usuário Logado: <span id="user-email-display" class="font-mono">Carregando...</span></p>
         </footer>
     </div>
     

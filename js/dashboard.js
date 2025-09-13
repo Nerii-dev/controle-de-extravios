@@ -1,13 +1,16 @@
-import { db, ensureAuth, STORES, appId } from './firebase-init.js';
+// js/dashboard.js
+import { db, auth, ensureAuth, logoutUser, STORES, appId } from './firebase-init.js';
 import { collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 let allItems = [];
 
-// Garante que o usuário está autenticado antes de carregar os dados
 ensureAuth(user => {
+    // Exibe o email do usuário logado
+    document.getElementById('user-email-display').textContent = user.email; 
+    // Adiciona o listener para o botão de logout
+    document.getElementById('logout-btn').addEventListener('click', logoutUser);
+
     const userId = user.uid;
-    document.getElementById('user-id-display').textContent = userId;
-    
     const itemsCollection = collection(db, `artifacts/${appId}/users/${userId}/lost_products`);
     
     // Ouve as atualizações em tempo real
@@ -17,7 +20,6 @@ ensureAuth(user => {
     });
 });
 
-// Navega para a página de controle com o ID do pedido como parâmetro
 function showOrderDetails(order) {
     if(order && order.orderId) {
         window.location.href = `controle_extravios.html?orderId=${encodeURIComponent(order.orderId)}`;
@@ -49,7 +51,6 @@ function updateDashboard(lostItems) {
             </div>`;
     }
 
-    // Lógica para Prazos a Vencer
     const upcomingDeadlinesContainer = document.getElementById('upcoming-deadlines-list');
     upcomingDeadlinesContainer.innerHTML = '';
     const today = new Date();
@@ -98,7 +99,6 @@ function updateDashboard(lostItems) {
         });
     }
     
-    // Lógica para Reembolsos Solicitados
     const reimbursementsContainer = document.getElementById('reimbursements-requested-list');
     reimbursementsContainer.innerHTML = '';
     
@@ -130,7 +130,6 @@ function updateDashboard(lostItems) {
         });
     }
 
-    // Adiciona listeners aos botões criados dinamicamente
     document.querySelectorAll('.view-details-btn-deadline, .view-details-btn-reimbursement').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const orderId = e.target.dataset.orderId;

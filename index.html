@@ -3,29 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de Extravios - E-commerce</title>
+    <title>Menu Principal - Controle de Extravios</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css">
     <style> body { font-family: 'Inter', sans-serif; } </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 text-gray-800">
 
-    <div id="home-view" class="min-h-screen flex flex-col items-center justify-center p-4">
-        <div class="text-center">
-            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">Controle de Extravios</h1>
-            <p class="text-lg text-gray-600 mb-12">Selecione uma área para começar a gerenciar.</p>
-            <div class="flex flex-col md:flex-row justify-center items-center gap-8">
-                <a href="dashboard.html" class="w-full max-w-sm bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 text-left no-underline">
-                    <h3 class="text-2xl font-bold text-blue-600 mb-2">Acessar Dashboard</h3>
-                    <p class="text-gray-500">Visualize os dados consolidados, totais e resumos por loja.</p>
+    <div id="app-container" class="min-h-screen flex flex-col items-center justify-center p-4">
+        <header class="w-full max-w-4xl flex justify-between items-center py-4 px-6 bg-white shadow-md rounded-lg mb-8">
+            <h1 class="text-xl md:text-2xl font-bold text-gray-900">Bem-vindo(a) ao Controle de Extravios</h1>
+            <button id="logout-btn" class="bg-red-500 text-white py-2 px-4 rounded-lg shadow hover:bg-red-600 transition-colors">Sair</button>
+        </header>
+
+        <main class="w-full max-w-4xl flex-grow flex items-center justify-center">
+            <div class="flex flex-col md:flex-row justify-center items-center gap-8 w-full">
+                <a href="controle_extravios.html" class="w-full max-w-sm h-64 bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 text-center no-underline flex flex-col items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-blue-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <line x1="10" y1="9" x2="8" y2="9"></line>
+                    </svg>
+                    <h3 class="text-2xl font-bold text-blue-600 mb-2">Controle de Extravios</h3>
+                    <p class="text-gray-500">Cadastre e gerencie os produtos perdidos.</p>
                 </a>
-                <a href="controle_extravios.html" class="w-full max-w-sm bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 text-left no-underline">
-                    <h3 class="text-2xl font-bold text-blue-600 mb-2">Acessar Controle</h3>
-                    <p class="text-gray-500">Adicione novos registros de extravio e consulte a lista completa.</p>
+                <a href="dashboard.html" class="w-full max-w-sm h-64 bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 text-center no-underline flex flex-col items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 20V10"></path>
+                        <path d="M18 20V4"></path>
+                        <path d="M6 20v-4"></path>
+                    </svg>
+                    <h3 class="text-2xl font-bold text-green-600 mb-2">Dashboard</h3>
+                    <p class="text-gray-500">Visualize os dados e status em gráficos.</p>
                 </a>
             </div>
-        </div>
-    </div>
+        </main>
 
+        <footer class="text-center text-gray-500 mt-8 w-full max-w-4xl">
+            <p>Usuário Logado: <span id="user-email-display" class="font-mono">Carregando...</span></p>
+        </footer>
+    </div>
+    
+    <div id="toast-container" class="toast-container"></div>
+    <script type="module" src="js/index.js"></script>
 </body>
 </html>
