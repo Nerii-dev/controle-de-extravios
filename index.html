@@ -2,52 +2,61 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Principal - Controle de Extravios</title>
+    <title>Menu Principal - 7Crypt©</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/common.css">
-    <style> body { font-family: 'Inter', sans-serif; } </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
-
-    <div id="app-container" class="min-h-screen flex flex-col items-center justify-center p-4">
-        <header class="w-full max-w-4xl flex justify-between items-center py-4 px-6 bg-white shadow-md rounded-lg mb-8">
-            <h1 class="text-xl md:text-2xl font-bold text-gray-900">Bem-vindo(a) ao Controle de Extravios</h1>
-            <button id="logout-btn" class="bg-red-500 text-white py-2 px-4 rounded-lg shadow hover:bg-red-600 transition-colors">Sair</button>
+    <div id="app-container" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="bg-white shadow-md rounded-lg p-6 mb-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <img src="assets/icons/lljoylogo.svg" alt="7Crypt Logo" class="h-14 w-auto">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Menu Principal</h1>
+                    </div>
+                </div>
+                <div class="flex items-center mt-4 sm:mt-0">
+                    <button id="logout-btn" class="ml-4 bg-red-500 text-white py-2 px-4 rounded-lg shadow hover:bg-red-600">Sair</button>
+                </div>
+            </div>
         </header>
 
-        <main class="w-full max-w-4xl flex-grow flex items-center justify-center">
-            <div class="flex flex-col md:flex-row justify-center items-center gap-8 w-full">
-                <a href="controle_extravios.html" class="w-full max-w-sm h-64 bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 text-center no-underline flex flex-col items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-blue-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <line x1="10" y1="9" x2="8" y2="9"></line>
-                    </svg>
-                    <h3 class="text-2xl font-bold text-blue-600 mb-2">Controle de Extravios</h3>
-                    <p class="text-gray-500">Cadastre e gerencie os produtos perdidos.</p>
+        <main class="mt-12">
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-8">
+                <a href="controle_extravios.html" class="group w-full max-w-sm bg-white p-8 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="bg-blue-100 p-4 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900 mt-6">Controle de Extravios</h2>
+                        <p class="text-gray-600 mt-2">Cadastre e gerencie os produtos perdidos.</p>
+                    </div>
                 </a>
-                <a href="dashboard.html" class="w-full max-w-sm h-64 bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 text-center no-underline flex flex-col items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 20V10"></path>
-                        <path d="M18 20V4"></path>
-                        <path d="M6 20v-4"></path>
-                    </svg>
-                    <h3 class="text-2xl font-bold text-green-600 mb-2">Dashboard</h3>
-                    <p class="text-gray-500">Visualize os dados e status em gráficos.</p>
+
+                <a href="dashboard.html" class="group w-full max-w-sm bg-white p-8 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="bg-green-100 p-4 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900 mt-6">Dashboard</h2>
+                        <p class="text-gray-600 mt-2">Visualize os dados e status em um gráfico.</p>
+                    </div>
                 </a>
             </div>
         </main>
-
-        <footer class="text-center text-gray-500 mt-8 w-full max-w-4xl">
+        
+        <footer class="text-center text-gray-500 mt-16">
             <p>Usuário Logado: <span id="user-email-display" class="font-mono">Carregando...</span></p>
+            <p class="text-sm mt-2">7Crypt© - NeriiDev</p>
         </footer>
     </div>
     
-    <div id="toast-container" class="toast-container"></div>
     <script type="module" src="js/index.js"></script>
 </body>
 </html>
