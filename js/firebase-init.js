@@ -6,12 +6,13 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase
 // --- CONFIGURAÇÃO ---
 // ‼️‼️ SUBSTITUA COM SUA CONFIGURAÇÃO REAL DO FIREBASE AQUI ‼️‼️
 const firebaseConfig = {
-    apiKey: "AIza...",
-    authDomain: "your-project.firebaseapp.com",
-    projectId: "your-project-id",
-    storageBucket: "your-project.appspot.com",
-    messagingSenderId: "...",
-    appId: "1:..."
+    apiKey: "AIzaSyBPy9J2RJ4kNslWT7SwCQEFua-NZrbHDzk",
+    authDomain: "extravio-84679.firebaseapp.com",
+    projectId: "extravio-84679",
+    storageBucket: "extravio-84679.firebasestorage.app",
+    messagingSenderId: "541000898123",
+    appId: "1:541000898123:web:973c1a656f6d2245201fce",
+    measurementId: "G-83X73YY3KC"
 };
 
 // --- CONSTANTES E VARIÁVEIS GLOBAIS ---
