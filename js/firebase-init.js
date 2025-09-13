@@ -17,7 +17,18 @@ const firebaseConfig = {
 
 
 // --- CONSTANTES ---
-const STORES = Array.from({ length: 8 }, (_, i) => `Loja ${String.fromCharCode(65 + i)}`);
+// --- CONSTANTES ---
+// Altere os nomes dentro das aspas para o que desejar.
+const STORES = [
+    "GORO NOVA",
+    "LLJOY",
+    "LOJA 3",
+    "7788",
+    "LOJA 5",
+    "LOJA 6",
+    "YUMI",
+    "IMPERIO"
+];
 const appId = 'default-app-id'; // Usado para a estrutura do Firestore
 
 // Inicialização

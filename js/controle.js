@@ -158,14 +158,22 @@ async function handleEditItem(e) {
         requestDate: document.getElementById('edit-request-date').value,
         items, totalValue
     };
-    try {
-        await updateDoc(doc(db, `artifacts/${appId}/users/${userId}/lost_products`, id), updatedData);
-        showToast("Pedido atualizado com sucesso!");
-        closeEditModal();
-    } catch (error) {
-        console.error("Erro ao atualizar pedido:", error);
-        showToast("Erro ao atualizar o pedido.", "error");
-    }
+
+    // MODIFICAÇÃO: Adicionando o modal de confirmação antes de salvar
+    showConfirmModal(
+        'Confirmar Alterações',
+        'Você tem certeza que deseja salvar as alterações neste pedido?',
+        async () => { // A lógica de salvar agora está dentro do callback de confirmação
+            try {
+                await updateDoc(doc(db, `artifacts/${appId}/users/${userId}/lost_products`, id), updatedData);
+                showToast("Pedido atualizado com sucesso!");
+                closeEditModal();
+            } catch (error) {
+                console.error("Erro ao atualizar pedido:", error);
+                showToast("Erro ao atualizar o pedido.", "error");
+            }
+        }
+    );
 }
 
 function setupRealtimeListener() {

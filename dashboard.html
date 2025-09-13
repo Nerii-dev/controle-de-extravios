@@ -6,6 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/common.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
@@ -50,13 +51,31 @@
                         <p id="status-contested" class="text-3xl font-bold mt-2">0</p>
                     </div>
                 </div>
+
+                <div class="bg-white p-4 rounded-lg shadow mt-8">
+                     <h3 class="text-sm font-medium text-gray-600 mb-2">Filtrar listas por status:</h3>
+                     <div id="status-filters-container" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <div class="mt-8 grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    <div id="status-chart-container" class="bg-white p-6 rounded-lg shadow lg:col-span-2">
+                        <h3 class="text-xl font-bold mb-4">Distribuição por Status</h3>
+                        <canvas id="status-chart"></canvas>
+                    </div>
+                    <div id="store-value-chart-container" class="bg-white p-6 rounded-lg shadow lg:col-span-3">
+                        <h3 class="text-xl font-bold mb-4">Valor Extraviado por Loja</h3>
+                        <canvas id="store-value-chart"></canvas>
+                    </div>
+                </div>
+
                 <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="bg-white p-6 rounded-lg shadow lg:col-span-1">
-                        <h3 class="text-xl font-bold mb-4">Extravios por Loja (Pedidos)</h3>
+                        <h3 class="text-xl font-bold mb-1">Extravios por Loja (Pedidos)</h3>
+                        <p class="text-sm text-gray-500 mb-4">Clique em uma loja para filtrar a dashboard.</p>
                         <div id="store-summary" class="grid grid-cols-2 sm:grid-cols-3 gap-4"></div>
                     </div>
                     <div class="bg-white p-6 rounded-lg shadow lg:col-span-1">
-                        <h3 class="text-xl font-bold mb-4">Prazos a Vencer para Reclamação</h3>
+                        <h3 class="text-xl font-bold mb-4">Prazos para Reclamação</h3>
                         <div id="upcoming-deadlines-list" class="space-y-1"></div>
                     </div>
                     <div class="bg-white p-6 rounded-lg shadow lg:col-span-1">
