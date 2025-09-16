@@ -72,8 +72,9 @@
                     <div class="flex justify-between items-center mb-6 border-b border-gray-200">
                         <nav class="flex -mb-px space-x-6">
                             <button id="tab-lancamento" class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg active">Lançamento</button>
+                            <button id="tab-ml-full" class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg">ML FULL</button>
                             <button id="tab-contagem" class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg">Contagem</button>
-                            <button id="tab-relatorio" class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg">Relatório Diário</button>
+                            <button id="tab-relatorio" class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg">Relatórios</button>
                         </nav>
                          <p id="current-date" class="text-lg font-semibold text-gray-600"></p>
                     </div>
@@ -87,20 +88,113 @@
                             </table>
                         </div>
                     </div>
+                    
+                    <div id="view-ml-full" style="display: none;">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            </div>
+                        <div class="border-t border-gray-200 mt-6 pt-4 flex justify-end items-center">
+                            <span class="font-bold text-gray-800 text-xl mr-4">TOTAL ML FULL:</span>
+                            <span id="total-ml-full" class="text-4xl font-bold text-blue-600">0</span>
+                        </div>
+                    </div>
     
                     <div id="view-contagem" style="display: none;">
                         <div id="counting-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            </div>
+                        </div>
                     </div>
     
                     <div id="view-relatorio" style="display: none;">
-                        <div id="report-loader" class="flex justify-center items-center py-8" style="display: none;"><div class="loader"></div></div>
-                        <div id="report-container" class="overflow-x-auto">
-                             <table class="min-w-full border-collapse border border-gray-300">
-                                <thead id="report-table-head" class="bg-gray-100 text-center"></thead>
-                                <tbody id="report-table-body" class="bg-white"></tbody>
-                                <tfoot id="report-table-footer" class="bg-gray-200 font-bold border-t-2 border-gray-300"></tfoot>
-                            </table>
+                        <div class="mb-6 border-b border-gray-200">
+                            <nav class="flex -mb-px space-x-6">
+                                <button data-target="subview-relatorio-diario" class="report-sub-tab-btn tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg active">
+                                    Relatório Diário
+                                </button>
+                                <button data-target="subview-relatorio-contagem" class="report-sub-tab-btn tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg">
+                                    Relatório Contagem
+                                </button>
+                                <button data-target="subview-relatorio-horarios" class="report-sub-tab-btn tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg">
+                                    Relatório por Horários
+                                </button>
+                            </nav>
+                        </div>
+
+                        <div id="report-loader" class="flex justify-center items-center py-8"><div class="loader"></div></div>
+
+                        <div id="subview-relatorio-diario" class="report-sub-view">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Relatório de Lançamentos</h2>
+                            <div id="report-container" class="overflow-x-auto">
+                                <table class="min-w-full border-collapse border border-gray-300">
+                                    <thead class="bg-gray-100 text-center">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left">Loja</th>
+                                            <th class="px-4 py-3 text-center">Flex</th>
+                                            <th class="px-4 py-3 text-center">Coleta</th>
+                                            <th class="px-4 py-3 text-center">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="report-table-body" class="bg-white"></tbody>
+                                    <tfoot id="report-table-footer" class="bg-gray-200 font-bold"></tfoot>
+                                </table>
+                            </div>
+
+                            <div id="lancamento-summary-container" class="mt-8">
+                                <h3 class="text-xl font-bold text-gray-800 mb-4">Resumo por Loja e Método</h3>
+                                <div class="overflow-x-auto max-w-lg">
+                                    <table class="min-w-full border-collapse border border-gray-300">
+                                        <thead class="bg-gray-100">
+                                            <tr>
+                                                <th class="px-4 py-3 text-left">Loja</th>
+                                                <th class="px-4 py-3 text-center">Flex</th>
+                                                <th class="px-4 py-3 text-center">Coleta</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="lancamento-summary-body" class="bg-white">
+                                        </tbody>
+                                        <tfoot id="lancamento-summary-footer" class="bg-gray-200 font-bold">
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div id="total-faturados-container" class="mt-12">
+                                <h2 class="text-2xl font-bold text-gray-800 mb-4">Total de Faturados</h2>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full border-collapse border border-gray-300">
+                                        <thead class="bg-gray-100 text-center">
+                                            <tr>
+                                                <th class="px-4 py-3 border-r">Total Lançamento</th>
+                                                <th class="px-4 py-3 border-r">Total ML FULL</th>
+                                                <th class="px-4 py-3">Total Geral Faturado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="total-faturados-body" class="bg-white text-center text-2xl font-bold"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="subview-relatorio-contagem" class="report-sub-view" style="display: none;">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Relatório de Contagens</h2>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full border-collapse border border-gray-300">
+                                    <thead id="report-contagem-head" class="bg-gray-100 text-center"></thead>
+                                    <tbody id="report-contagem-body" class="bg-white"></tbody>
+                                    <tfoot id="report-contagem-footer" class="bg-gray-200 font-bold"></tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div id="subview-relatorio-horarios" class="report-sub-view" style="display: none;">
+                            <div id="report-by-time-container">
+                                <h2 class="text-2xl font-bold text-gray-800 mb-4">Relatório por Horários (Lançamento)</h2>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full border-collapse border border-gray-300">
+                                        <thead id="report-by-time-head" class="bg-gray-100 text-center"></thead>
+                                        <tbody id="report-by-time-body" class="bg-white"></tbody>
+                                        <tfoot id="report-by-time-footer" class="bg-gray-200 font-bold"></tfoot>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
     

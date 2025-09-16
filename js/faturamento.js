@@ -13,7 +13,10 @@ const storeConfig = {
     gomez:      { name: "GOMEZ", methods: { flex: true, coleta: true } }, 
     goro_antiga:{ name: "GORO ANTIGA", methods: { flex: true, coleta: true } }, 
     '7788':     { name: "7788", methods: { flex: true, coleta: true } }, 
-    la:         { name: "LA", methods: { flex: true, coleta: true } } 
+    la:         { name: "LA", methods: { flex: true, coleta: true } },
+    flexboys:   { name: "FlexBoys", methods: { flex: true, coleta: true } },
+    frenet:     { name: "Frenet", methods: { flex: true, coleta: true } },
+    retirada:   { name: "Retirada", methods: { flex: true, coleta: true } }
 };
 
 const contagemConfig = [
@@ -24,7 +27,25 @@ const contagemConfig = [
 ];
 
 // --- ELEMENTOS DO DOM ---
-const userEmailDisplay = document.getElementById('user-email-display'), logoutBtn = document.getElementById('logout-btn'), saveBtn = document.getElementById('save-btn'), currentDateEl = document.getElementById('current-date'), tabLancamento = document.getElementById('tab-lancamento'), tabContagem = document.getElementById('tab-contagem'), tabRelatorio = document.getElementById('tab-relatorio'), viewLancamento = document.getElementById('view-lancamento'), viewContagem = document.getElementById('view-contagem'), viewRelatorio = document.getElementById('view-relatorio'), invoiceTableHead = document.getElementById('invoice-table-head'), invoiceTableBody = document.getElementById('invoice-table-body'), invoiceTableFooter = document.getElementById('invoice-table-footer'), countingCardsContainer = document.getElementById('counting-cards-container'), reportLoader = document.getElementById('report-loader'), reportContainer = document.getElementById('report-container'), reportTableHead = document.getElementById('report-table-head'), reportTableBody = document.getElementById('report-table-body'), reportTableFooter = document.getElementById('report-table-footer'), saveButtonContainer = document.getElementById('save-button-container');
+const userEmailDisplay = document.getElementById('user-email-display'), 
+      logoutBtn = document.getElementById('logout-btn'), 
+      saveBtn = document.getElementById('save-btn'), 
+      currentDateEl = document.getElementById('current-date'), 
+      tabLancamento = document.getElementById('tab-lancamento'), 
+      tabMlFull = document.getElementById('tab-ml-full'),
+      tabContagem = document.getElementById('tab-contagem'), 
+      tabRelatorio = document.getElementById('tab-relatorio'), 
+      viewLancamento = document.getElementById('view-lancamento'), 
+      viewMlFull = document.getElementById('view-ml-full'),
+      viewContagem = document.getElementById('view-contagem'), 
+      viewRelatorio = document.getElementById('view-relatorio'), 
+      invoiceTableHead = document.getElementById('invoice-table-head'), 
+      invoiceTableBody = document.getElementById('invoice-table-body'), 
+      invoiceTableFooter = document.getElementById('invoice-table-footer'), 
+      countingCardsContainer = document.getElementById('counting-cards-container'), 
+      reportLoader = document.getElementById('report-loader'), 
+      reportContainer = document.getElementById('report-container'), 
+      saveButtonContainer = document.getElementById('save-button-container');
 
 // --- VARIÁVEIS DE ESTADO ---
 let userId;
@@ -36,26 +57,55 @@ ensureAuth(user => {
     logoutBtn.addEventListener('click', logoutUser);
     displayDate();
     setupTabs();
+    setupReportSubTabs();
     initLancamentoView();
     initContagemView();
+    initMlFullView();
     loadTodaysData();
 });
 
 // --- LÓGICA DAS ABAS ---
 function setupTabs() {
     tabLancamento.addEventListener('click', () => switchView('lancamento'));
+    tabMlFull.addEventListener('click', () => switchView('ml-full'));
     tabContagem.addEventListener('click', () => switchView('contagem'));
     tabRelatorio.addEventListener('click', () => switchView('relatorio'));
 }
+
 function switchView(viewName) {
-    const views = { lancamento: viewLancamento, contagem: viewContagem, relatorio: viewRelatorio };
-    const tabs = { lancamento: tabLancamento, contagem: tabContagem, relatorio: tabRelatorio };
+    const views = { lancamento: viewLancamento, 'ml-full': viewMlFull, contagem: viewContagem, relatorio: viewRelatorio };
+    const tabs = { lancamento: tabLancamento, 'ml-full': tabMlFull, contagem: tabContagem, relatorio: tabRelatorio };
     for (const key in views) {
         views[key].style.display = key === viewName ? 'block' : 'none';
         tabs[key].classList.toggle('active', key === viewName);
     }
     saveButtonContainer.style.display = viewName === 'relatorio' ? 'none' : 'flex';
-    if (viewName === 'relatorio') buildDailyReport();
+    if (viewName === 'relatorio') {
+        buildDailyReport();
+        buildReportByTime();
+    }
+}
+
+function setupReportSubTabs() {
+    const subTabs = document.querySelectorAll('.report-sub-tab-btn');
+    const subViews = document.querySelectorAll('.report-sub-view');
+
+    subTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetViewId = tab.dataset.target;
+
+            subTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            subViews.forEach(view => {
+                if (view.id === targetViewId) {
+                    view.style.display = 'block';
+                } else {
+                    view.style.display = 'none';
+                }
+            });
+        });
+    });
 }
 
 // --- LÓGICA COMUM ---
@@ -88,6 +138,19 @@ async function loadTodaysData() {
         }
     } catch (error) { console.error("Erro ao carregar dados de contagem:", error); }
     finally { updateContagemTotals(); }
+
+    const docRefMlFull = doc(db, `artifacts/${appId}/users/${userId}/daily_ml_full`, getFormattedDate());
+    try {
+        const docSnap = await getDoc(docRefMlFull);
+        if (docSnap.exists()) {
+            const data = docSnap.data().counts;
+            for (const key in data) {
+                const input = document.getElementById(key);
+                if (input) input.value = data[key];
+            }
+        }
+    } catch (error) { console.error("Erro ao carregar dados de ML FULL:", error); }
+    finally { updateMlFullTotal(); }
 }
 
 async function saveData() {
@@ -104,6 +167,19 @@ async function saveData() {
     try {
         await setDoc(docRefContagem, contagemData);
     } catch (error) { console.error("Erro ao salvar contagem:", error); showToast("Erro ao salvar dados de Contagem.", "error"); return; }
+
+    const docRefMlFull = doc(db, `artifacts/${appId}/users/${userId}/daily_ml_full`, getFormattedDate());
+    const mlFullData = { counts: {}, lastUpdated: new Date() };
+    document.querySelectorAll('.ml-full-input').forEach(input => {
+        mlFullData.counts[input.id] = parseInt(input.value) || 0;
+    });
+    try {
+        await setDoc(docRefMlFull, mlFullData);
+    } catch (error) {
+        console.error("Erro ao salvar ML FULL:", error);
+        showToast("Erro ao salvar dados de ML FULL.", "error");
+        return;
+    }
     
     showToast("Dados do dia salvos com sucesso!", "success");
 }
@@ -119,7 +195,6 @@ function buildLancamentoTable() {
     for (const storeKey in storeConfig) {
         const store = storeConfig[storeKey];
         bodyHtml += `<tr class="text-center"><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-left border-r">${store.name}</td>`;
-        // ALTERAÇÃO: Adicionado value="0" aos inputs
         timeSlots.flex.forEach(time => bodyHtml += `<td class="px-2 py-2 whitespace-nowrap border-r"><input type="number" id="${storeKey}_flex_${time.id}" class="invoice-input p-2 border border-gray-300 rounded-md shadow-sm text-center" min="0" value="0" ${!store.methods.flex ? 'disabled' : ''}></td>`);
         timeSlots.coleta.forEach(time => bodyHtml += `<td class="px-2 py-2 whitespace-nowrap border-r"><input type="number" id="${storeKey}_coleta_${time.id}" class="invoice-input p-2 border border-gray-300 rounded-md shadow-sm text-center" min="0" value="0" ${!store.methods.coleta ? 'disabled' : ''}></td>`);
         bodyHtml += `<td id="total_${storeKey}" class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">0</td></tr>`;
@@ -130,9 +205,8 @@ function buildLancamentoTable() {
     timeSlots.coleta.forEach(t => headHtml += `<th class="px-2 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider border-r border-b">${t.label}</th>`);
     invoiceTableHead.innerHTML = headHtml + `</tr>`;
     document.querySelectorAll('.invoice-input').forEach(input => input.addEventListener('input', updateLancamentoTotals));
-    updateLancamentoTotals(); // Chama a função para calcular os totais iniciais
+    updateLancamentoTotals();
 }
-
 
 function updateLancamentoTotals() {
     const columnTotals = {}; let grandTotal = 0;
@@ -159,6 +233,32 @@ function updateLancamentoTotals() {
     invoiceTableFooter.innerHTML = footerHtml + `<td class="px-6 py-4 text-base text-gray-900">${grandTotal}</td></tr>`;
 }
 
+// --- LÓGICA DA VIEW ML FULL ---
+function initMlFullView() {
+    const container = viewMlFull.querySelector('.grid');
+    let html = '';
+    for (const storeKey in storeConfig) {
+        const store = storeConfig[storeKey];
+        html += `
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                <label for="ml-full_${storeKey}" class="block text-lg font-bold text-gray-800 mb-2">${store.name}</label>
+                <input type="number" id="ml-full_${storeKey}" class="ml-full-input w-full p-2 border border-gray-300 rounded-md shadow-sm text-center text-2xl" min="0" value="0">
+            </div>
+        `;
+    }
+    container.innerHTML = html;
+    viewMlFull.querySelectorAll('.ml-full-input').forEach(input => {
+        input.addEventListener('input', updateMlFullTotal);
+    });
+}
+
+function updateMlFullTotal() {
+    let total = 0;
+    document.querySelectorAll('.ml-full-input').forEach(input => {
+        total += parseInt(input.value) || 0;
+    });
+    document.getElementById('total-ml-full').textContent = total;
+}
 
 // --- LÓGICA DA VIEW DE CONTAGEM ---
 function initContagemView() {
@@ -234,14 +334,21 @@ function updateContagemTotals(cardIdToUpdate) {
     }
 }
 
-
 // --- LÓGICA DA VIEW DE RELATÓRIO ---
 function buildDailyReport() {
     reportLoader.style.display = 'flex';
-    reportContainer.style.display = 'none';
+    if(reportContainer) reportContainer.style.display = 'none';
 
-    // 1. Coletar dados de Lançamento
+    buildLancamentoReport();
+    buildContagemReport();
+    
+    reportLoader.style.display = 'none';
+}
+
+function buildLancamentoReport() {
     const lancamentoData = {};
+    let footerTotals = { lancamento_flex: 0, lancamento_coleta: 0, lancamento_total: 0 };
+    
     for (const storeKey in storeConfig) {
         let flexTotal = 0;
         let coletaTotal = 0;
@@ -254,69 +361,176 @@ function buildDailyReport() {
             if (input) coletaTotal += parseInt(input.value) || 0;
         });
         lancamentoData[storeKey] = { flex: flexTotal, coleta: coletaTotal, total: flexTotal + coletaTotal };
+        
+        footerTotals.lancamento_flex += flexTotal;
+        footerTotals.lancamento_coleta += coletaTotal;
+        footerTotals.lancamento_total += flexTotal + coletaTotal;
     }
 
-    // 2. Coletar dados de Contagem
-    const contagemData = {};
-    for (const storeKey in storeConfig) {
-        contagemData[storeKey] = {};
-        const storeName = storeConfig[storeKey].name;
-        contagemConfig.forEach(card => {
-            const itemId = `${card.id}_${storeName.replace(/\s+/g, '_').toLowerCase()}`;
-            const countEl = document.querySelector(`.count-display[data-id="${itemId}"]`);
-            contagemData[storeKey][card.id] = countEl ? parseInt(countEl.textContent) : 0;
-        });
-    }
-
-    // 3. Construir a Tabela
-    let headHtml = `<tr>
-        <th rowspan="2" class="px-4 py-3 text-left align-middle border-r">Loja</th>
-        <th colspan="3" class="px-4 py-3 text-center border-b border-r">Lançamento</th>`;
-    contagemConfig.forEach(card => {
-        headHtml += `<th rowspan="2" class="px-4 py-3 text-center align-middle border-r">${card.name}</th>`;
-    });
-    headHtml += `</tr><tr>
-        <th class="px-4 py-3 text-center border-r">Flex</th>
-        <th class="px-4 py-3 text-center border-r">Coleta</th>
-        <th class="px-4 py-3 text-center border-r">Total</th>
-    </tr>`;
-    reportTableHead.innerHTML = headHtml;
+    const reportTableBodyLancamento = document.getElementById('report-table-body');
+    const reportTableFooterLancamento = document.getElementById('report-table-footer');
+    if (!reportTableBodyLancamento || !reportTableFooterLancamento) return;
 
     let bodyHtml = '';
-    const footerTotals = { lancamento_flex: 0, lancamento_coleta: 0, lancamento_total: 0 };
-    contagemConfig.forEach(card => footerTotals[card.id] = 0);
-
     for (const storeKey in storeConfig) {
         bodyHtml += `<tr class="text-center">
             <td class="px-4 py-3 text-left border-r font-medium">${storeConfig[storeKey].name}</td>
             <td class="px-4 py-3 border-r">${lancamentoData[storeKey].flex}</td>
             <td class="px-4 py-3 border-r">${lancamentoData[storeKey].coleta}</td>
-            <td class="px-4 py-3 border-r font-bold">${lancamentoData[storeKey].total}</td>`;
-        
-        footerTotals.lancamento_flex += lancamentoData[storeKey].flex;
-        footerTotals.lancamento_coleta += lancamentoData[storeKey].coleta;
-        footerTotals.lancamento_total += lancamentoData[storeKey].total;
-
-        contagemConfig.forEach(card => {
-            const count = contagemData[storeKey][card.id] || 0;
-            bodyHtml += `<td class="px-4 py-3 border-r">${count}</td>`;
-            footerTotals[card.id] += count;
-        });
-        bodyHtml += `</tr>`;
+            <td class="px-4 py-3 border-r font-bold">${lancamentoData[storeKey].total}</td>
+        </tr>`;
     }
-    reportTableBody.innerHTML = bodyHtml;
-
-    let footerHtml = `<tr class="text-center">
+    reportTableBodyLancamento.innerHTML = bodyHtml;
+    reportTableFooterLancamento.innerHTML = `<tr class="text-center font-bold">
         <td class="px-4 py-3 text-right uppercase">Total Geral</td>
         <td class="px-4 py-3">${footerTotals.lancamento_flex}</td>
         <td class="px-4 py-3">${footerTotals.lancamento_coleta}</td>
-        <td class="px-4 py-3">${footerTotals.lancamento_total}</td>`;
+        <td class="px-4 py-3">${footerTotals.lancamento_total}</td>
+    </tr>`;
+
+    const summaryBody = document.getElementById('lancamento-summary-body');
+    const summaryFooter = document.getElementById('lancamento-summary-footer');
+    if (summaryBody && summaryFooter) {
+        let summaryBodyHtml = '';
+        for (const storeKey in storeConfig) {
+            summaryBodyHtml += `
+                <tr class="text-center">
+                    <td class="px-4 py-3 text-left font-medium">${storeConfig[storeKey].name}</td>
+                    <td class="px-4 py-3 text-lg font-semibold">${lancamentoData[storeKey].flex}</td>
+                    <td class="px-4 py-3 text-lg font-semibold">${lancamentoData[storeKey].coleta}</td>
+                </tr>
+            `;
+        }
+        summaryBody.innerHTML = summaryBodyHtml;
+
+        summaryFooter.innerHTML = `
+            <tr class="text-center">
+                <td class="px-4 py-3 text-right uppercase">Total Geral</td>
+                <td class="px-4 py-3">${footerTotals.lancamento_flex}</td>
+                <td class="px-4 py-3">${footerTotals.lancamento_coleta}</td>
+            </tr>
+        `;
+    }
+
+    const totalLancamento = footerTotals.lancamento_total || 0;
+    let totalMlFull = 0;
+    document.querySelectorAll('.ml-full-input').forEach(input => {
+        totalMlFull += parseInt(input.value) || 0;
+    });
+    const totalGeralFaturado = totalLancamento + totalMlFull;
+    const faturadosBody = document.getElementById('total-faturados-body');
+    if (faturadosBody) {
+        faturadosBody.innerHTML = `
+            <tr>
+                <td class="px-4 py-4 border-r">${totalLancamento}</td>
+                <td class="px-4 py-4 border-r">${totalMlFull}</td>
+                <td class="px-4 py-4 text-green-600">${totalGeralFaturado}</td>
+            </tr>
+        `;
+    }
+}
+
+function buildContagemReport() {
+    const contagemData = {};
+    const allContagemItems = [...new Set(contagemConfig.flatMap(card => card.items))];
+    
+    allContagemItems.forEach(item => {
+        const itemKey = item.replace(/\s+/g, '_').toLowerCase();
+        contagemData[itemKey] = {};
+        contagemConfig.forEach(card => {
+            const itemId = `${card.id}_${itemKey}`;
+            const countEl = document.querySelector(`.count-display[data-id="${itemId}"]`);
+            contagemData[itemKey][card.id] = countEl ? parseInt(countEl.textContent) : 0;
+        });
+    });
+
+    const headContagem = document.getElementById('report-contagem-head');
+    const bodyContagem = document.getElementById('report-contagem-body');
+    const footerContagem = document.getElementById('report-contagem-footer');
+    if (!headContagem || !bodyContagem || !footerContagem) return;
+
+    let headHtml = `<tr><th class="px-4 py-3 text-left">Loja/Item</th>`;
     contagemConfig.forEach(card => {
-        footerHtml += `<td class="px-4 py-3">${footerTotals[card.id]}</td>`;
+        headHtml += `<th class="px-4 py-3 text-center">${card.name}</th>`;
+    });
+    headHtml += `</tr>`;
+    headContagem.innerHTML = headHtml;
+
+    let bodyHtml = '';
+    const footerTotals = {};
+    contagemConfig.forEach(card => footerTotals[card.id] = 0);
+
+    allContagemItems.forEach(item => {
+        const itemKey = item.replace(/\s+/g, '_').toLowerCase();
+        bodyHtml += `<tr class="text-center">
+            <td class="px-4 py-3 text-left font-medium">${item}</td>`;
+        contagemConfig.forEach(card => {
+            const count = (contagemData[itemKey] && contagemData[itemKey][card.id]) ? contagemData[itemKey][card.id] : 0;
+            bodyHtml += `<td class="px-4 py-3 border-l">${count}</td>`;
+            footerTotals[card.id] += count;
+        });
+        bodyHtml += `</tr>`;
+    });
+    bodyContagem.innerHTML = bodyHtml;
+
+    let footerHtml = `<tr class="text-center font-bold">
+        <td class="px-4 py-3 text-right uppercase">Total Geral</td>`;
+    contagemConfig.forEach(card => {
+        footerHtml += `<td class="px-4 py-3 border-l">${footerTotals[card.id]}</td>`;
     });
     footerHtml += `</tr>`;
-    reportTableFooter.innerHTML = footerHtml;
+    footerContagem.innerHTML = footerHtml;
+}
 
-    reportLoader.style.display = 'none';
-    reportContainer.style.display = 'block';
+function buildReportByTime() {
+    const headContainer = document.getElementById('report-by-time-head');
+    const bodyContainer = document.getElementById('report-by-time-body');
+    const footerContainer = document.getElementById('report-by-time-footer');
+    if (!headContainer || !bodyContainer || !footerContainer) return;
+
+    let headHtml = `<tr><th rowspan="2" class="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase tracking-wider border-r border-b align-middle">Loja</th><th colspan="${timeSlots.flex.length}" class="px-6 py-3 text-center text-sm font-bold text-gray-700 uppercase tracking-wider border-r border-b">Flex</th><th colspan="${timeSlots.coleta.length}" class="px-6 py-3 text-center text-sm font-bold text-gray-700 uppercase tracking-wider border-r border-b">Coleta</th><th rowspan="2" class="px-6 py-3 text-center text-sm font-bold text-gray-700 uppercase tracking-wider border-b align-middle">Total</th></tr><tr>`;
+    timeSlots.flex.forEach(t => headHtml += `<th class="px-2 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider border-r border-b">${t.label}</th>`);
+    timeSlots.coleta.forEach(t => headHtml += `<th class="px-2 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider border-r border-b">${t.label}</th>`);
+    headContainer.innerHTML = headHtml + `</tr>`;
+
+    let bodyHtml = '';
+    const columnTotals = {};
+    let grandTotal = 0;
+
+    for (const storeKey in storeConfig) {
+        const store = storeConfig[storeKey];
+        let rowTotal = 0;
+        bodyHtml += `<tr class="text-center"><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-left border-r">${store.name}</td>`;
+
+        timeSlots.flex.forEach(time => {
+            const inputId = `${storeKey}_flex_${time.id}`;
+            const columnKey = `flex_${time.id}`;
+            if (!columnTotals[columnKey]) columnTotals[columnKey] = 0;
+            const input = document.getElementById(inputId);
+            const value = (input && !input.disabled) ? parseInt(input.value) || 0 : 0;
+            bodyHtml += `<td class="px-2 py-2 whitespace-nowrap border-r">${value}</td>`;
+            rowTotal += value;
+            columnTotals[columnKey] += value;
+        });
+
+        timeSlots.coleta.forEach(time => {
+            const inputId = `${storeKey}_coleta_${time.id}`;
+            const columnKey = `coleta_${time.id}`;
+            if (!columnTotals[columnKey]) columnTotals[columnKey] = 0;
+            const input = document.getElementById(inputId);
+            const value = (input && !input.disabled) ? parseInt(input.value) || 0 : 0;
+            bodyHtml += `<td class="px-2 py-2 whitespace-nowrap border-r">${value}</td>`;
+            rowTotal += value;
+            columnTotals[columnKey] += value;
+        });
+
+        bodyHtml += `<td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">${rowTotal}</td></tr>`;
+        grandTotal += rowTotal;
+    }
+    bodyContainer.innerHTML = bodyHtml;
+
+    let footerHtml = `<tr class="text-center font-bold"><td class="px-6 py-4 text-sm text-gray-900 uppercase text-right border-r">Total Geral</td>`;
+    timeSlots.flex.forEach(time => footerHtml += `<td class="px-2 py-4 text-base text-gray-900 border-r">${columnTotals[`flex_${time.id}`] || 0}</td>`);
+    timeSlots.coleta.forEach(time => footerHtml += `<td class="px-2 py-4 text-base text-gray-900 border-r">${columnTotals[`coleta_${time.id}`] || 0}</td>`);
+    footerContainer.innerHTML = footerHtml + `<td class="px-6 py-4 text-base text-gray-900">${grandTotal}</td></tr>`;
 }
