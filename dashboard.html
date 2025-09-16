@@ -33,10 +33,18 @@
 
         <main>
             <div id="dashboard-view">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     <div class="bg-white p-6 rounded-lg shadow">
                         <h3 class="text-gray-500 font-medium">Total Extraviado (R$)</h3>
                         <p id="total-value" class="text-3xl font-bold mt-2">R$ 0,00</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-gray-500 font-medium">Valor Reembolsado (R$)</h3>
+                        <p id="total-reimbursed" class="text-3xl font-bold mt-2 text-green-600">R$ 0,00</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-gray-500 font-medium">Saldo (Reembolsado - Extraviado)</h3>
+                        <p id="total-balance" class="text-3xl font-bold mt-2">R$ 0,00</p>
                     </div>
                     <div class="bg-white p-6 rounded-lg shadow">
                         <h3 class="text-gray-500 font-medium">Pedidos em Análise</h3>
@@ -53,7 +61,7 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-lg shadow mt-8">
-                     <h3 class="text-sm font-medium text-gray-600 mb-2">Filtrar listas por status:</h3>
+                     <h3 class="text-sm font-medium text-gray-600 mb-2">Filtrar gráficos e listas por status:</h3>
                      <div id="status-filters-container" class="flex flex-wrap gap-2"></div>
                 </div>
 
