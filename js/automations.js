@@ -101,7 +101,10 @@ function setupRealtimeListener() {
         allOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         allOrders.sort((a, b) => new Date(b.shippingDate) - new Date(a.shippingDate));
         
-        populateStatusFilter(allOrders);
+        // CORREÇÃO: A população do filtro de status foi movida para fora do loop em tempo real.
+        // A função abaixo agora apenas atualiza a lista de status, se necessário.
+        updateStatusFilterIfNeeded(allOrders); 
+        
         renderFilteredItems();
 
         loader.style.display = 'none';
@@ -145,10 +148,22 @@ function createItemInputRow(container) {
     itemRow.querySelector('.remove-item-btn').addEventListener('click', () => itemRow.remove());
 }
 
-function populateStatusFilter(orders) {
-    const statuses = [...new Set(orders.map(o => o.status))];
-    filterStatus.innerHTML = `<option value="all">Todos os Status</option>` + statuses.map(s => `<option value="${s}">${s}</option>`).join('');
+// MELHORIA: Esta função agora verifica se precisa atualizar o filtro
+// antes de reconstruí-lo, evitando o loop de renderização.
+function updateStatusFilterIfNeeded(orders) {
+    const currentOptions = Array.from(filterStatus.options).map(opt => opt.value);
+    const newStatuses = [...new Set(orders.map(o => o.status))];
+    
+    // Compara se os status existentes são os mesmos que os novos
+    const statusesChanged = currentOptions.length - 1 !== newStatuses.length || newStatuses.some(s => !currentOptions.includes(s));
+
+    if (statusesChanged) {
+        const currentValue = filterStatus.value;
+        filterStatus.innerHTML = `<option value="all">Todos os Status</option>` + newStatuses.map(s => `<option value="${s}">${s}</option>`).join('');
+        filterStatus.value = currentValue; // Mantém o filtro selecionado se ainda existir
+    }
 }
+
 
 function renderFilteredItems() {
     const storeF = filterStore.value;
@@ -191,4 +206,28 @@ function renderTable(orders) {
             </td>`;
         
         const detailsContainer = detailsTr.querySelector('td');
-        let itemsHtml = `<div class="p-4"><h4 class="font-semibold text-gray-700 mb
+        let itemsHtml = `<div class="p-4"><h4 class="font-semibold text-gray-700 mb-2">Itens do Pedido:</h4><ul class="list-disc pl-6 space-y-1 text-sm">`;
+        (order.items || []).forEach(item => {
+            itemsHtml += `<li><span class="font-semibold">${item.sku}</span> - ${item.itemName} (R$ ${(item.value || 0).toFixed(2).replace('.', ',')})</li>`;
+        });
+        itemsHtml += '</ul></div>';
+        detailsContainer.innerHTML = itemsHtml;
+        
+        itemsTableBody.appendChild(tr);
+        itemsTableBody.appendChild(detailsTr);
+        
+        tr.querySelector('td:first-child').addEventListener('click', () => {
+            detailsTr.classList.toggle('hidden');
+            tr.querySelector('svg').classList.toggle('rotate-90');
+        });
+        tr.querySelector('.delete-btn').addEventListener('click', (e) => deleteOrder(e.target.dataset.id));
+    });
+    
+    const filteredTotal = orders.reduce((sum, order) => sum + (order.totalValue || 0), 0);
+    itemsTableFooter.innerHTML = `
+        <tr>
+            <td class="px-6 py-4" colspan="3">Total na Consulta:</td>
+            <td class="px-6 py-4 font-semibold">R$ ${filteredTotal.toFixed(2).replace('.', ',')}</td>
+            <td class="px-6 py-4" colspan="3"></td>
+        </tr>`;
+}
