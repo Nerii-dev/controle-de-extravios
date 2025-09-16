@@ -5,7 +5,6 @@ import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/f
 // --- CONFIGURAÇÃO ---
 const timeSlots = { flex: [ { id: "0800", label: "08:00" }, { id: "1000", label: "10:00" }, { id: "1200", label: "12:00" }, { id: "1700", label: "Último Horário" } ], coleta: [ { id: "0800", label: "08:00" }, { id: "1000", label: "10:00" }, { id: "1200", label: "12:00" }, { id: "1700", label: "Último Horário" } ] };
 
-// CORREÇÃO: Todas as lojas agora tem flex e coleta habilitados
 const storeConfig = { 
     lljoy:      { name: "LL JOY", methods: { flex: true, coleta: true } }, 
     goro_nova:  { name: "GORO NOVA", methods: { flex: true, coleta: true } }, 
@@ -18,10 +17,10 @@ const storeConfig = {
 };
 
 const contagemConfig = [
-    { id: 'contagem_flex', name: 'CONTAGEM FLEX', items: ['GORO NOVA', 'LL JOY', 'GORO', '7788', 'LA', 'GOMEZ', 'YUMI', 'IMPERIO', 'FLEXBOYS'] },
-    { id: 'primeira_contagem', name: 'PRIMEIRA CONTAGEM', items: ['GORO NOVA', 'LL JOY', 'GORO', '7788', 'LA', 'GOMEZ', 'YUMI', 'IMPERIO', 'FLEXBOYS', 'RETIRADA', 'SHOPEE'] },
-    { id: 'segunda_contagem_flex', name: 'SEGUNDA CONTAGEM FLEX', items: ['GORO NOVA', 'LL JOY', 'GORO', '7788', 'LA', 'GOMEZ', 'YUMI', 'IMPERIO', 'FLEXBOYS'] },
-    { id: 'contagem_final', name: 'CONTAGEM FINAL', items: ['GORO NOVA', 'LL JOY', 'GORO', '7788', 'LA', 'GOMEZ', 'YUMI', 'IMPERIO', 'FLEXBOYS', 'RETIRADA', 'SHOPEE'] }
+    { id: 'contagem_flex', name: 'CONTAGEM FLEX', items: ['GORO NOVA', 'LL JOY', 'GORO ANTIGA', '7788', 'LA', 'GOMEZ', 'YUMI', 'IMPERIO'] },
+    { id: 'primeira_contagem', name: 'PRIMEIRA CONTAGEM', items: ['GORO NOVA', 'LL JOY', 'GORO ANTIGA', '7788', 'LA', 'GOMEZ', 'YUMI', 'IMPERIO', 'RETIRADA', 'SHOPEE'] },
+    { id: 'segunda_contagem_flex', name: 'SEGUNDA CONTAGEM FLEX', items: ['GORO NOVA', 'LL JOY', 'GORO ANTIGA', '7788', 'LA', 'GOMEZ', 'YUMI', 'IMPERIO'] },
+    { id: 'contagem_final', name: 'CONTAGEM FINAL', items: ['GORO NOVA', 'LL JOY', 'GORO ANTIGA', '7788', 'LA', 'GOMEZ', 'YUMI', 'IMPERIO', 'RETIRADA', 'SHOPEE'] }
 ];
 
 // --- ELEMENTOS DO DOM ---
@@ -64,7 +63,6 @@ function getFormattedDate() { return new Date().toISOString().split('T')[0]; }
 function displayDate() { currentDateEl.textContent = new Date().toLocaleString('pt-BR', { dateStyle: 'long' }); }
 
 async function loadTodaysData() {
-    // Carrega dados do Lançamento
     const docRefLancamento = doc(db, `artifacts/${appId}/users/${userId}/daily_invoicing`, getFormattedDate());
     try {
         const docSnap = await getDoc(docRefLancamento);
@@ -78,7 +76,6 @@ async function loadTodaysData() {
     } catch (error) { console.error("Erro ao carregar dados de lançamento:", error); } 
     finally { updateLancamentoTotals(); }
 
-    // Carrega dados da Contagem
     const docRefContagem = doc(db, `artifacts/${appId}/users/${userId}/daily_counts`, getFormattedDate());
     try {
         const docSnap = await getDoc(docRefContagem);
@@ -94,7 +91,6 @@ async function loadTodaysData() {
 }
 
 async function saveData() {
-    // Salva dados do Lançamento
     const docRefLancamento = doc(db, `artifacts/${appId}/users/${userId}/daily_invoicing`, getFormattedDate());
     const lancamentoData = { counts: {}, lastUpdated: new Date() };
     document.querySelectorAll('.invoice-input:not(:disabled)').forEach(input => { lancamentoData.counts[input.id] = parseInt(input.value) || 0; });
@@ -102,7 +98,6 @@ async function saveData() {
         await setDoc(docRefLancamento, lancamentoData);
     } catch (error) { console.error("Erro ao salvar lançamento:", error); showToast("Erro ao salvar dados de Lançamento.", "error"); return; }
 
-    // Salva dados da Contagem
     const docRefContagem = doc(db, `artifacts/${appId}/users/${userId}/daily_counts`, getFormattedDate());
     const contagemData = { counts: {}, lastUpdated: new Date() };
     document.querySelectorAll('.count-display').forEach(el => { contagemData.counts[el.dataset.id] = parseInt(el.textContent) || 0; });
@@ -124,8 +119,9 @@ function buildLancamentoTable() {
     for (const storeKey in storeConfig) {
         const store = storeConfig[storeKey];
         bodyHtml += `<tr class="text-center"><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-left border-r">${store.name}</td>`;
-        timeSlots.flex.forEach(time => bodyHtml += `<td class="px-2 py-2 whitespace-nowrap border-r"><input type="number" id="${storeKey}_flex_${time.id}" class="invoice-input p-2 border border-gray-300 rounded-md shadow-sm text-center" min="0" ${!store.methods.flex ? 'disabled' : ''}></td>`);
-        timeSlots.coleta.forEach(time => bodyHtml += `<td class="px-2 py-2 whitespace-nowrap border-r"><input type="number" id="${storeKey}_coleta_${time.id}" class="invoice-input p-2 border border-gray-300 rounded-md shadow-sm text-center" min="0" ${!store.methods.coleta ? 'disabled' : ''}></td>`);
+        // ALTERAÇÃO: Adicionado value="0" aos inputs
+        timeSlots.flex.forEach(time => bodyHtml += `<td class="px-2 py-2 whitespace-nowrap border-r"><input type="number" id="${storeKey}_flex_${time.id}" class="invoice-input p-2 border border-gray-300 rounded-md shadow-sm text-center" min="0" value="0" ${!store.methods.flex ? 'disabled' : ''}></td>`);
+        timeSlots.coleta.forEach(time => bodyHtml += `<td class="px-2 py-2 whitespace-nowrap border-r"><input type="number" id="${storeKey}_coleta_${time.id}" class="invoice-input p-2 border border-gray-300 rounded-md shadow-sm text-center" min="0" value="0" ${!store.methods.coleta ? 'disabled' : ''}></td>`);
         bodyHtml += `<td id="total_${storeKey}" class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">0</td></tr>`;
     }
     invoiceTableBody.innerHTML = bodyHtml;
@@ -134,7 +130,9 @@ function buildLancamentoTable() {
     timeSlots.coleta.forEach(t => headHtml += `<th class="px-2 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider border-r border-b">${t.label}</th>`);
     invoiceTableHead.innerHTML = headHtml + `</tr>`;
     document.querySelectorAll('.invoice-input').forEach(input => input.addEventListener('input', updateLancamentoTotals));
+    updateLancamentoTotals(); // Chama a função para calcular os totais iniciais
 }
+
 
 function updateLancamentoTotals() {
     const columnTotals = {}; let grandTotal = 0;
@@ -175,9 +173,10 @@ function buildContagemCards() {
             <h3 class="text-xl font-bold text-gray-800 border-b border-slate-200 pb-3 mb-4">${card.name}</h3>
             <div class="space-y-4">`;
         card.items.forEach(item => {
-            const itemId = `${card.id}_${item.replace(/\s+/g, '_').toLowerCase()}`;
+            const adjustedItemName = item === 'GORO' ? 'GORO ANTIGA' : item;
+            const itemId = `${card.id}_${adjustedItemName.replace(/\s+/g, '_').toLowerCase()}`;
             html += `<div class="flex justify-between items-center">
-                <span class="text-gray-700 font-medium text-lg">${item}</span>
+                <span class="text-gray-700 font-medium text-lg">${adjustedItemName}</span>
                 <div class="flex items-center gap-4">
                     <button class="counter-btn minus" data-id="${itemId}" data-card-id="${card.id}">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
@@ -224,7 +223,7 @@ function updateContagemTotals(cardIdToUpdate) {
             cardTotal += parseInt(el.textContent);
         });
         document.getElementById(`total_${cardIdToUpdate}`).textContent = cardTotal;
-    } else { // Atualiza todos se nenhum card específico for passado
+    } else { 
         contagemConfig.forEach(card => {
             let cardTotal = 0;
             document.querySelectorAll(`#counting-cards-container .count-display[data-id^="${card.id}"]`).forEach(el => {
@@ -237,6 +236,87 @@ function updateContagemTotals(cardIdToUpdate) {
 
 
 // --- LÓGICA DA VIEW DE RELATÓRIO ---
-async function buildDailyReport() {
-    // (O código para a view de relatório continua o mesmo)
+function buildDailyReport() {
+    reportLoader.style.display = 'flex';
+    reportContainer.style.display = 'none';
+
+    // 1. Coletar dados de Lançamento
+    const lancamentoData = {};
+    for (const storeKey in storeConfig) {
+        let flexTotal = 0;
+        let coletaTotal = 0;
+        timeSlots.flex.forEach(time => {
+            const input = document.getElementById(`${storeKey}_flex_${time.id}`);
+            if (input) flexTotal += parseInt(input.value) || 0;
+        });
+        timeSlots.coleta.forEach(time => {
+            const input = document.getElementById(`${storeKey}_coleta_${time.id}`);
+            if (input) coletaTotal += parseInt(input.value) || 0;
+        });
+        lancamentoData[storeKey] = { flex: flexTotal, coleta: coletaTotal, total: flexTotal + coletaTotal };
+    }
+
+    // 2. Coletar dados de Contagem
+    const contagemData = {};
+    for (const storeKey in storeConfig) {
+        contagemData[storeKey] = {};
+        const storeName = storeConfig[storeKey].name;
+        contagemConfig.forEach(card => {
+            const itemId = `${card.id}_${storeName.replace(/\s+/g, '_').toLowerCase()}`;
+            const countEl = document.querySelector(`.count-display[data-id="${itemId}"]`);
+            contagemData[storeKey][card.id] = countEl ? parseInt(countEl.textContent) : 0;
+        });
+    }
+
+    // 3. Construir a Tabela
+    let headHtml = `<tr>
+        <th rowspan="2" class="px-4 py-3 text-left align-middle border-r">Loja</th>
+        <th colspan="3" class="px-4 py-3 text-center border-b border-r">Lançamento</th>`;
+    contagemConfig.forEach(card => {
+        headHtml += `<th rowspan="2" class="px-4 py-3 text-center align-middle border-r">${card.name}</th>`;
+    });
+    headHtml += `</tr><tr>
+        <th class="px-4 py-3 text-center border-r">Flex</th>
+        <th class="px-4 py-3 text-center border-r">Coleta</th>
+        <th class="px-4 py-3 text-center border-r">Total</th>
+    </tr>`;
+    reportTableHead.innerHTML = headHtml;
+
+    let bodyHtml = '';
+    const footerTotals = { lancamento_flex: 0, lancamento_coleta: 0, lancamento_total: 0 };
+    contagemConfig.forEach(card => footerTotals[card.id] = 0);
+
+    for (const storeKey in storeConfig) {
+        bodyHtml += `<tr class="text-center">
+            <td class="px-4 py-3 text-left border-r font-medium">${storeConfig[storeKey].name}</td>
+            <td class="px-4 py-3 border-r">${lancamentoData[storeKey].flex}</td>
+            <td class="px-4 py-3 border-r">${lancamentoData[storeKey].coleta}</td>
+            <td class="px-4 py-3 border-r font-bold">${lancamentoData[storeKey].total}</td>`;
+        
+        footerTotals.lancamento_flex += lancamentoData[storeKey].flex;
+        footerTotals.lancamento_coleta += lancamentoData[storeKey].coleta;
+        footerTotals.lancamento_total += lancamentoData[storeKey].total;
+
+        contagemConfig.forEach(card => {
+            const count = contagemData[storeKey][card.id] || 0;
+            bodyHtml += `<td class="px-4 py-3 border-r">${count}</td>`;
+            footerTotals[card.id] += count;
+        });
+        bodyHtml += `</tr>`;
+    }
+    reportTableBody.innerHTML = bodyHtml;
+
+    let footerHtml = `<tr class="text-center">
+        <td class="px-4 py-3 text-right uppercase">Total Geral</td>
+        <td class="px-4 py-3">${footerTotals.lancamento_flex}</td>
+        <td class="px-4 py-3">${footerTotals.lancamento_coleta}</td>
+        <td class="px-4 py-3">${footerTotals.lancamento_total}</td>`;
+    contagemConfig.forEach(card => {
+        footerHtml += `<td class="px-4 py-3">${footerTotals[card.id]}</td>`;
+    });
+    footerHtml += `</tr>`;
+    reportTableFooter.innerHTML = footerHtml;
+
+    reportLoader.style.display = 'none';
+    reportContainer.style.display = 'block';
 }
