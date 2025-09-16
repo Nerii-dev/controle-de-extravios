@@ -4,7 +4,6 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 // --- CONFIGURAÇÃO ---
-// ‼️‼️ COLE A SUA CONFIGURAÇÃO DO FIREBASE AQUI ‼️‼️
 const firebaseConfig = {
     apiKey: "AIzaSyBPy9J2RJ4kNslWT7SwCQEFua-NZrbHDzk",
     authDomain: "extravio-84679.firebaseapp.com",
@@ -15,17 +14,15 @@ const firebaseConfig = {
     measurementId: "G-83X73YY3KC"
 };
 
-
 // --- CONSTANTES ---
-// --- CONSTANTES ---
-// Altere os nomes dentro das aspas para o que desejar.
+// NOMES DAS LOJAS ATUALIZADOS AQUI
 const STORES = [
     "GORO NOVA",
     "LLJOY",
-    "LOJA 3",
+    "GOMEZ",      // Antiga LOJA 3
     "7788",
-    "LOJA 5",
-    "LOJA 6",
+    "GORO ANTIGA",// Antiga LOJA 5
+    "LA",         // Antiga LOJA 6
     "YUMI",
     "IMPERIO"
 ];
@@ -42,10 +39,8 @@ const db = getFirestore(app);
 function ensureAuth(callback) {
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            // Usuário está logado, executa o código da página
             callback(user);
         } else {
-            // Usuário não está logado, redireciona para a página de login
             const currentPath = window.location.pathname;
             if (!currentPath.includes('login.html')) {
                  window.location.href = 'login.html';
@@ -57,7 +52,7 @@ function ensureAuth(callback) {
 // Função de Logout
 function logoutUser() {
     signOut(auth).then(() => {
-        window.location.href = 'login.html'; // Redireciona para o login após sair
+        window.location.href = 'login.html';
     }).catch(error => {
         console.error('Erro no logout:', error);
         showToast('Erro ao sair.', 'error');
@@ -93,5 +88,4 @@ function parseCurrency(value) {
     return parseFloat(numericString) || 0;
 }
 
-// Exporta tudo que será usado nos outros scripts
 export { db, auth, ensureAuth, logoutUser, showToast, formatCurrency, parseCurrency, STORES, appId };

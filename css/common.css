@@ -55,3 +55,36 @@ body {
 }
 .toast.success { background-color: #28a745; }
 .toast.error { background-color: #dc3545; }
+
+
+/* --- NOVOS ESTILOS PARA SIDEBAR E LAYOUT --- */
+.sidebar {
+    width: 260px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.main-content {
+    width: calc(100% - 260px);
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    color: #4b5563; /* text-gray-600 */
+    transition: background-color 0.2s, color 0.2s;
+}
+.sidebar-link:hover {
+    background-color: #f3f4f6; /* hover:bg-gray-100 */
+    color: #111827; /* hover:text-gray-900 */
+}
+.sidebar-link.active {
+    background-color: #3b82f6; /* bg-blue-600 */
+    color: white;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+.sidebar-link.active svg {
+    color: white;
+}
