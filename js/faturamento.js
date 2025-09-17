@@ -30,6 +30,7 @@ const contagemConfig = [
 const userEmailDisplay = document.getElementById('user-email-display'), 
       logoutBtn = document.getElementById('logout-btn'), 
       saveBtn = document.getElementById('save-btn'), 
+      exportExcelBtn = document.getElementById('export-excel-btn'),
       currentDateEl = document.getElementById('current-date'), 
       tabLancamento = document.getElementById('tab-lancamento'), 
       tabMlFull = document.getElementById('tab-ml-full'),
@@ -55,6 +56,7 @@ ensureAuth(user => {
     userId = user.uid;
     userEmailDisplay.textContent = user.email;
     logoutBtn.addEventListener('click', logoutUser);
+
     displayDate();
     setupTabs();
     setupReportSubTabs();
@@ -79,7 +81,10 @@ function switchView(viewName) {
         views[key].style.display = key === viewName ? 'block' : 'none';
         tabs[key].classList.toggle('active', key === viewName);
     }
+    
     saveButtonContainer.style.display = viewName === 'relatorio' ? 'none' : 'flex';
+    exportExcelBtn.style.display = viewName === 'relatorio' ? 'block' : 'none';
+
     if (viewName === 'relatorio') {
         buildDailyReport();
         buildReportByTime();
@@ -534,3 +539,26 @@ function buildReportByTime() {
     timeSlots.coleta.forEach(time => footerHtml += `<td class="px-2 py-4 text-base text-gray-900 border-r">${columnTotals[`coleta_${time.id}`] || 0}</td>`);
     footerContainer.innerHTML = footerHtml + `<td class="px-6 py-4 text-base text-gray-900">${grandTotal}</td></tr>`;
 }
+
+// --- LÓGICA DE EXPORTAÇÃO ---
+function exportReportsToExcel() {
+    const tblLancamento = document.querySelector('#report-container table');
+    const tblContagem = document.querySelector('#subview-relatorio-contagem table');
+    const tblHorarios = document.querySelector('#report-by-time-container table');
+
+    const wb = XLSX.utils.book_new();
+
+    const wsLancamento = XLSX.utils.table_to_sheet(tblLancamento);
+    XLSX.utils.book_append_sheet(wb, wsLancamento, "Relatório Diário");
+
+    const wsContagem = XLSX.utils.table_to_sheet(tblContagem);
+    XLSX.utils.book_append_sheet(wb, wsContagem, "Relatório Contagem");
+
+    const wsHorarios = XLSX.utils.table_to_sheet(tblHorarios);
+    XLSX.utils.book_append_sheet(wb, wsHorarios, "Relatório por Horários");
+
+    const today = getFormattedDate();
+    XLSX.writeFile(wb, `Relatorios_${today}.xlsx`);
+}
+
+exportExcelBtn.addEventListener('click', exportReportsToExcel);

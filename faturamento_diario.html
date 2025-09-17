@@ -6,6 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/common.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
     <style>
         .invoice-input[type="number"] { width: 6rem; }
         .invoice-input:disabled { background-color: #f3f4f6; cursor: not-allowed; }
@@ -76,7 +77,12 @@
                             <button id="tab-contagem" class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg">Contagem</button>
                             <button id="tab-relatorio" class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg">Relatórios</button>
                         </nav>
-                         <p id="current-date" class="text-lg font-semibold text-gray-600"></p>
+                        <div class="flex items-center gap-4">
+                            <p id="current-date" class="text-lg font-semibold text-gray-600"></p>
+                            <button id="export-excel-btn" class="bg-green-600 text-white py-2 px-4 rounded-lg shadow hover:bg-green-700 hidden">
+                                Exportar para Excel
+                            </button>
+                        </div>
                     </div>
                     
                     <div id="view-lancamento">
