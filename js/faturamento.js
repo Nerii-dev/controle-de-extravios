@@ -118,7 +118,19 @@ function getFormattedDate() { return new Date().toISOString().split('T')[0]; }
 function displayDate() { currentDateEl.textContent = new Date().toLocaleString('pt-BR', { dateStyle: 'long' }); }
 
 async function loadTodaysData() {
-    const docRefLancamento = doc(db, `artifacts/${appId}/users/${userId}/daily_invoicing`, getFormattedDate());
+    document.querySelectorAll('.invoice-input, .ml-full-input').forEach(el => el.disabled = false);
+    document.querySelectorAll('.counter-btn').forEach(btn => {
+        btn.style.pointerEvents = 'auto';
+        btn.style.opacity = '1';
+    });
+    saveBtn.disabled = false;
+    saveBtn.style.cursor = 'pointer';
+    saveBtn.style.opacity = '1';
+
+    const dateString = getFormattedDate();
+    const basePath = `artifacts/${appId}/users/${userId}`;
+    
+    const docRefLancamento = doc(db, `${basePath}/daily_invoicing`, dateString);
     try {
         const docSnap = await getDoc(docRefLancamento);
         if (docSnap.exists()) {
@@ -131,7 +143,7 @@ async function loadTodaysData() {
     } catch (error) { console.error("Erro ao carregar dados de lançamento:", error); } 
     finally { updateLancamentoTotals(); }
 
-    const docRefContagem = doc(db, `artifacts/${appId}/users/${userId}/daily_counts`, getFormattedDate());
+    const docRefContagem = doc(db, `${basePath}/daily_counts`, dateString);
     try {
         const docSnap = await getDoc(docRefContagem);
         if (docSnap.exists()) {
@@ -144,7 +156,7 @@ async function loadTodaysData() {
     } catch (error) { console.error("Erro ao carregar dados de contagem:", error); }
     finally { updateContagemTotals(); }
 
-    const docRefMlFull = doc(db, `artifacts/${appId}/users/${userId}/daily_ml_full`, getFormattedDate());
+    const docRefMlFull = doc(db, `${basePath}/daily_ml_full`, dateString);
     try {
         const docSnap = await getDoc(docRefMlFull);
         if (docSnap.exists()) {
@@ -157,6 +169,7 @@ async function loadTodaysData() {
     } catch (error) { console.error("Erro ao carregar dados de ML FULL:", error); }
     finally { updateMlFullTotal(); }
 }
+
 
 async function saveData() {
     const docRefLancamento = doc(db, `artifacts/${appId}/users/${userId}/daily_invoicing`, getFormattedDate());
