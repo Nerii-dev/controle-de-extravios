@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Menu Principal - 7Crypt</title>
+    <title>Menu Principal - Grupo Gomez</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -19,13 +19,13 @@
 </head>
 <body class="bg-gray-100 min-h-screen">
     <!-- Cabeçalho Superior -->
-    <header class="bg-white shadow-md p-4 flex justify-between items-center">
-        <!-- Logo -->
-        <img src="assets/icons/lljoylogo.svg" alt="7Crypt Logo" class="mx-auto h-20 w-auto mb-4">
+    <header class="bg-white shadow-md p-4 flex justify-center items-center relative">
+        <!-- Logo Centralizado -->
+        <img src="assets/icons/lljoylogo.svg" alt="7Crypt Logo" class="h-16 w-auto">
         
-        <!-- Informação do Usuário e Botão de Logout -->
-        <div class="flex items-center gap-4">
-            <div class="text-right">
+        <!-- Informação do Usuário e Botão de Logout (Posicionado à Direita) -->
+        <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-4">
+            <div class="text-right hidden sm:block">
                 <p class="text-sm text-gray-500">Logado como:</p>
                 <p id="user-email-display" class="font-mono text-gray-800 break-words max-w-xs">Carregando...</p>
             </div>
