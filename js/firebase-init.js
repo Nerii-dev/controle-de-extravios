@@ -2,16 +2,17 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
-// --- CONFIGURAÇÃO ---
+// --- NOVA CONFIGURAÇÃO ---
 const firebaseConfig = {
-    apiKey: "AIzaSyBPy9J2RJ4kNslWT7SwCQEFua-NZrbHDzk",
-    authDomain: "extravio-84679.firebaseapp.com",
-    projectId: "extravio-84679",
-    storageBucket: "extravio-84679.firebasestorage.app",
-    messagingSenderId: "541000898123",
-    appId: "1:541000898123:web:973c1a656f6d2245201fce",
-    measurementId: "G-83X73YY3KC"
+  apiKey: "AIzaSyCyyM2PQBE1Ojb9tju7hGKwwwWNZgWIuDw",
+  authDomain: "grupo-gomez-a6654.firebaseapp.com",
+  projectId: "grupo-gomez-a6654",
+  storageBucket: "grupo-gomez-a6654.firebasestorage.app",
+  messagingSenderId: "132122400826",
+  appId: "1:132122400826:web:95f354858daab26b78fd03",
+  measurementId: "G-12FDXY2N36"
 };
 
 // --- CONSTANTES ---
